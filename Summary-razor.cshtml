@@ -1,0 +1,109 @@
+@using NriServicing.Helpers
+@model NriServicing.ViewModels.LoanSetViewModel
+
+@foreach (var Loan in Model.LoanList)
+{
+    <div class="row">
+        <div class="col border-box">
+            @*Loan Identifier--Display if customer has a <Customer Loan Role> =BORROWER AND Has more than ONE loan OR Display if <Customer Loan Role>=COSIGNER*@
+            @* Where Loan Number and Loan Program name are purple Borrower First name displayed as possessive (�s) Name is always in all capital letters*@
+            @if (Loan.CustomerRoleIndicator == "BORROWER" && Model.LoanList.Count > 1 || Loan.CustomerRoleIndicator != "BORROWER")
+            {
+                <div class="row no-gutters">
+                    <div class="col loan-title">
+                        <h4>@Loan.LoanDisplayName</h4>
+                    </div>
+                </div>
+            }
+            @{
+                string textcolorClassName = string.Empty;
+                string buttonClassName = "primary-button";
+                if (Convert.ToInt32(Loan.FdrDelinquentDays) >= 6)
+                {
+                    textcolorClassName = "red-text";
+                    //buttonClassName = "red-primary-button";
+                }
+            }
+            <div class="row no-gutters">
+                @* Payment Due Amount *@
+                <div class="col-6 col-lg-3">
+                    <label>@LoanDetails.TotalPaymentDue_Label</label>
+                    @* Always display--$ sign and amount are purple if customer�s loan <FDR Delinquent Days> is < 6 days    Else    $ sign and amount are red if customer�s loan has an <FDR Delinquent Days> is = or > 6 days *@
+                    <span class="val-block dollars payment-due @textcolorClassName">@String.Format("{0:C}", Loan.AmountDue)</span>
+                </div>
+                <div class="col-6 col-lg-3">
+                    <label>@LoanDetails.PaymentDueDate_Label</label>
+                    @* Payment Due Date--Display if <Total Outstanding Loan Balance> is >$0.00 *@
+                    @if (Loan.CurrentBalance > 0)
+                    {
+                        @* Display Text Rules:Month, Day, and Year are purple if <FDR Delinquent Days> is < 6 days else Month, Day, and Year are red if <FDR Delinquent Days> is = or > 6 days *@
+                        <span class="val-block @textcolorClassName">@Loan.DateDue</span>
+                    }
+                    else
+                    {
+                        @* Display if <Total Outstanding Loan Balance>= to or < $0.00 -- Text is Green *@
+                        <span class="val-block green-text">@Html.Raw(LoanDetails.PaidinFullText_Label)</span>
+                    }
+                </div>
+
+                <div class="col-6 col-lg-3">
+                    <label>@LoanDetails.CurrentBalance_Label</label>
+                    @* Current Balance-- $<Total Outstanding Loan Balance> *@
+                    <span class="val-block dollars">@ResourceFile.GetAmount(Loan.CurrentBalance)</span>
+                </div>
+                <div class="col-6 col-lg-3">
+                    <div class="recent-payments-statements-box">
+                        @* Display if < Recent Payment Amount > is > $0.00 Else do not display.*@
+                        <p class="recent-payment">@Loan.LastPaymentMessage</p>
+                        @* Display in Non-smartphone breakpoint *@
+                        <a class="font-weight-bold link-text" href="#" onclick="window.location.href = '@Url.Action("Inbox", "Inbox")'">@Html.Raw(LoanDetails.ViewStatements_Label)</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="payment-action">
+                <div class="payment-button text-center text-sm-left">
+                    @*Display if the <Total Outstanding Loan Balance>  is > $0.00*@
+                    @*Display Text Rules: Button outline and text is blue if <FDR Days Delinquent>< 6 days. Button outline and text is red if <FDR Days Delinquent> is = or > 6 days' delinquent*@
+                    <button class="blue button primary-button" data-loanId="@Loan.LoanId" onclick="makeAPayment(this)">@LoanDetails.MakeAPayment_Label</button>
+                </div>
+                <div class="text-center text-sm-left">
+                    @if (Loan.IsAutoPayEnrolled && Convert.ToInt32(Loan.FdrDelinquentDays) < 16 && Loan.CurrentBalance >= 0)
+                    {
+                        <div class="payment-status text-center text-sm-left">
+                            <div title="Auto Pay">
+                                <span class="autopay-notification" alt="@LoanDetails.LoanAutoPay_Alt"><span class="icon-navient-autopay"></span>@LoanDetails.EnrolledinAutoPay_Label</span>
+                            </div>
+                        </div>
+                    }
+                    @* Past Due < 16 Days Warning *@
+                    @if (Convert.ToInt32(Loan.FdrDelinquentDays) >= 6 && Convert.ToInt32(Loan.FdrDelinquentDays) < 16)
+                    {
+                        <div class="payment-status text-center text-sm-left">
+                            <p class="red-text" title="Past Due Warning">
+                                <span alt="@LoanDetails.PastDue_Alt">@Html.Raw(LoanDetails.PaymentispastdueWarning_Message)</span><br /><span>@Html.Raw(LoanDetails.PaynowtoavoidalatefeeWarning_Message)</span>
+                            </p>
+                        </div>
+                    }
+                    @*Date: 6/30/2017 Defect: 52815 , added 'YoubeenchangedalatefeeWarning_Arrowicon'*@@* Late Fee Message *@
+                    @if (Loan.LateFee > 0 && Convert.ToInt32(Loan.FdrDelinquentDays) >= 16 && Convert.ToInt32(Loan.FdrDelinquentDays) < 30)
+                    {
+                        <div class="payment-status text-center text-sm-left">
+                            <p class="red-text" title="Past Due Warning">
+                                <span alt="@LoanDetails.PastDue_Alt">@Html.Raw(LoanDetails.PaymentispastdueWarning_Message)</span><br /><span>@Html.Raw(LoanDetails.YoubeenchangedalatefeeWarning_Message)</span> <a class="link-text" href="#" onclick="window.location.href = '@Url.Action("Index", "AccountHistory")'"> @Html.Raw(LoanDetails.ViewHistory_Text)</a> <span>@Html.Raw(LoanDetails.YoubeenchangedalatefeeWarning_Arrowicon)</span>
+                            </p>
+                        </div>
+                    }
+                    @if (Convert.ToInt32(Loan.FdrDelinquentDays) >= 30)
+                    {
+                        <div class="payment-status text-center text-sm-left">
+                            <p class="red-text" title="Past Due Warning">
+                                <span alt="@LoanDetails.PastDue_Alt">@Html.Raw(LoanDetails.PaymentispastdueWarning_Message)</span><br /><span>@Html.Raw(LoanDetails.PaymentispastDue_Contact)</span>
+                            </p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+   }

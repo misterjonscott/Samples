@@ -1,0 +1,225 @@
+// Import varaibles first, so they can be used in all partials
+@import './partials/variables';
+
+#account-summary {
+    #notification-row {
+        p {
+            font-size: .8em;
+        }
+    }
+
+    .edelivery-img {
+        width: 70px;
+        margin: 0 auto;
+        display: block;
+    }
+    @media (max-width: 1300px) {
+        .edelivery-img {
+            width: 55px;
+        }
+    }
+
+    p.last-login {
+        position: absolute;
+        top: 0em;
+        right: 1em;
+    }
+
+    h3.notification-positive,
+    h3.notification-warning,
+    h3.notification-negative {
+        font-size: 1em;
+    }
+    h3.section-title {
+        display: inline-block;
+    }
+
+    .payment-notification {
+        .fa-check {
+            margin-right: .5em;
+        }
+        @media only screen and ($xs) {
+            margin: 1em 0;
+        }
+    }
+
+    p.summary-disclaimer {
+        font-size: 1em;
+        margin-top: 1em;
+    }
+
+    #summary-payment-details {
+        p {
+            margin-bottom: 0;
+        }
+        .val-block {
+            font-size: 1.3em;
+        }
+    }
+
+    .border-box {
+        border: 1px solid $border-grey;
+        margin: 10px 1em;
+        padding: 20px;
+    }
+
+    .progress {
+        margin-bottom: 1em;
+    }
+
+    .autopay-notification {
+        font-size: 1em;
+        color: $color-jungle-green;
+        .icon-navient-autopay {
+            font-size: 1.5em;
+            vertical-align: middle;
+            line-height: 1em;
+        }
+    }
+
+    #summary-payment-details {
+        .payment-action,
+        .finance-action {
+            display: flex;
+            align-items: center;
+            flex-direction: row;
+            margin: 1em auto 0;
+            @media only screen and ($xs) {
+                flex-direction: column;
+            }
+        }
+        .payment-button,
+        .payment-status {
+            display: inline-block;
+            margin-right: 1em;
+            @media only screen and ($xs) {
+                display: block;
+                width: 100%;
+                margin-right: 0;
+            }
+        }
+        .autopay-notification {
+            @media only screen and ($xs) {
+                display: inline-block;
+                margin-top: 1em;
+            }
+        }
+    }
+
+    #loan-details {
+        hr {
+            margin-left: -20px;
+            margin-right: -20px;
+            border-top:  1px solid $border-grey;
+            margin-top: 1em;
+            margin-bottom: 1em;
+        }
+        .autopay-notification {
+            @media only screen and ($xs) {
+                display: inline-block;
+                margin: 1em auto;
+            }
+        }
+        .finance-action {
+            display: flex;
+            align-items: center;
+            flex-direction: row;
+            margin: 1em auto 0;
+            .bank-name {
+                display: flex;
+                align-items: center;
+                color: $label-grey;
+            }
+            .account-section {
+                flex: 1;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            .number-section {
+                white-space: nowrap;
+                width: 3em;
+                display: inline-block;
+            }
+            button {
+                margin: 0 10px 0 0;
+            }
+            @media only screen and ($xs) {
+                display: block;
+                button {
+                    display: block;
+                    width: 100%;
+                    margin: 0 0 10px 0;
+                }
+            }
+        }
+    }
+
+    #summary-profile {
+        .notification-positive {
+            margin-top: 1em;
+            @media only screen and ($xs) {
+                margin-top: 0;
+            }
+        }
+
+        .military-benefits {
+            color: $color-brand-blue;
+            margin-right: .5em;
+            cursor: pointer;
+        }
+
+        //.cell-phone-consent-text {
+        //
+        //}
+    }
+
+    #loan-details,
+    #profile-details {
+        // Margin the top away from the expand/collapse
+        margin-top: 1em;
+    }
+
+    #loan-details,
+    #summary-profile,
+    #summary-payment-details {
+        label,
+        p.recent-payment {
+            margin: 1em 0 .25em;
+        }
+        @media only screen and ($xs) {
+            .recent-payments-statements-box {
+                padding: 0.5em;
+                background: $color-white;
+                p.recent-payment {
+                    margin-top: 0;
+                }
+            }
+        }
+        .name h4,
+        .loan-title h4 {
+            color: $label-grey;
+            @media only screen and ($xs) {
+                font-size: 1.4em;
+            }
+            span {
+                color: $color-dark-grey;
+            }
+        }
+        .name h4 {
+            text-transform: uppercase;
+        }
+    }
+
+    #summary-loan-details {
+        > .col > .row {
+            margin-left: 0;
+            margin-right: 0;
+            > .col {
+                margin-left: 0;
+                margin-right: 0;
+            }
+        }
+    }
+
+}
